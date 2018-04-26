@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-ULONGLONG startEventSubscribe(char *channel, char* query, ULONGLONG  hBookmark, int flags);
+ULONGLONG startEventSubscribe(char *channel, char* query, ULONGLONG  hBookmark, int flags, PVOID ctx);
 
 /// our version of winerror.h doesn't have these... when we get an up-to-date compiler,
 // should be able to remove.

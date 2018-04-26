@@ -7,7 +7,7 @@
 
 DWORD WINAPI SubscriptionCallback(EVT_SUBSCRIBE_NOTIFY_ACTION action, PVOID pContext, EVT_HANDLE hEvent);
 DWORD PrintEvent(EVT_HANDLE hEvent);
-ULONGLONG startEventSubscribe(char *channel, char* query, ULONGLONG ulBookmark, int iFlags)
+ULONGLONG startEventSubscribe(char *channel, char* query, ULONGLONG ulBookmark, int iFlags, PVOID ctx)
 {
     EVT_HANDLE hBookmark = (EVT_HANDLE) ulBookmark;
     EVT_SUBSCRIBE_FLAGS flags = (EVT_SUBSCRIBE_FLAGS) iFlags;
@@ -32,7 +32,7 @@ ULONGLONG startEventSubscribe(char *channel, char* query, ULONGLONG ulBookmark, 
 	// Subscribe to events beginning with the oldest event in the channel. The subscription
 	// will return all current events in the channel and any future events that are raised
 	// while the application is active.
-	hSubscription = EvtSubscribe(NULL, NULL, pwsChannel, pwsQuery, NULL, NULL,
+	hSubscription = EvtSubscribe(NULL, NULL, pwsChannel, pwsQuery, NULL, ctx,
 		(EVT_SUBSCRIBE_CALLBACK)SubscriptionCallback, EvtSubscribeToFutureEvents);
 	if (NULL == hSubscription)
 	{
@@ -72,16 +72,16 @@ DWORD WINAPI SubscriptionCallback(EVT_SUBSCRIBE_NOTIFY_ACTION action, PVOID pCon
 	case EvtSubscribeActionError:
 		if ((ULONGLONG)ERROR_EVT_QUERY_RESULT_STALE == (ULONGLONG)hEvent)
 		{
-			goStaleCallback((ULONGLONG)hEvent);
+			goStaleCallback((ULONGLONG)hEvent, pContext);
 		}
 		else
 		{
-			goErrorCallback((ULONGLONG) hEvent);
+			goErrorCallback((ULONGLONG) hEvent, pContext);
 		}
 		break;
 
 	case EvtSubscribeActionDeliver:
-		goNotificationCallback((ULONGLONG) hEvent);
+		goNotificationCallback((ULONGLONG) hEvent, pContext);
 		break;
 
 	default:
