@@ -10,7 +10,6 @@ last-change
 
 # Android Studio build and IDE configuration files.
 local.properties
-gradlew*
 gradle
 build
 app/build
