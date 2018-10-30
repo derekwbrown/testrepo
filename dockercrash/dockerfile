@@ -1,0 +1,27 @@
+
+# use windows nano as the base image
+
+
+#FROM microsoft/nanoserver
+FROM microsoft/windowsservercore:1803
+
+MAINTAINER derek.brown@datadoghq.com
+
+RUN setx PYTHONIOENCODING UTF-8
+## create temporary directory
+RUN mkdir c:\\tmp
+
+## create target dir
+RUN mkdir c:\\devtools
+
+## set the working directory to tmp for all future commands
+WORKDIR c:\\tmp
+
+COPY ./software.ps1 software.ps1
+COPY ./*.ps1 /tmp/
+Run Powershell -Command .\install_go.ps1
+Run Powershell -Command .\install_git.ps1
+
+
+COPY ./entrypoint.bat /
+ENTRYPOINT ["/entrypoint.bat"]
